@@ -1,34 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     private GameObject focalPoint;
-    public float speed=10.0f;
+    private float speed = 10.0f;
     public bool hasPowerup = false;
     private float powerupStrength = 15.0f;
     public GameObject powerupIndicator;
+    public TextMeshProUGUI gameOverText;
+    public bool isGameActive;
+    private AudioSource audioSource; 
+
+    public float Speed
+    {
+        get { return speed; }
+        set { speed = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
-
+        isGameActive = true;
+        gameOverText.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>(); 
+        audioSource.Play(); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        float forwardInput = Input.GetAxis("Vertical");
-        playerRb.AddForce(focalPoint.transform.forward * speed * forwardInput);
+        if (isGameActive)
+        {
+            float forwardInput = Input.GetAxis("Vertical");
+            playerRb.AddForce(focalPoint.transform.forward * speed * forwardInput);
 
-        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+            powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
+
+            
+            if (transform.position.y < -10)
+            {
+                GameOver();
+            }
+        }
     }
 
-    
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Powerup"))
@@ -57,6 +78,12 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Collided with: " + collision.gameObject.name + " with powerup set to " + hasPowerup);
             enemyRigidbody.AddForce(awayFromPlayer * powerupStrength, ForceMode.Impulse);
         }
-       
+    }
+
+    public void GameOver()
+    {
+        isGameActive = false;
+        gameOverText.gameObject.SetActive(true);
+        audioSource.Stop(); 
     }
 }

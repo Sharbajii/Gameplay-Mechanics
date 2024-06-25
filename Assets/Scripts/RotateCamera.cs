@@ -6,12 +6,16 @@ public class RotateCamera : MonoBehaviour
 {
     public float rotationSpeed;
 
-
+    public float RotationSpeed
+    {
+        get { return rotationSpeed; }
+        set { rotationSpeed = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame

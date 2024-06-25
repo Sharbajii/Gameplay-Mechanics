@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SpwanManger : MonoBehaviour
@@ -8,11 +9,19 @@ public class SpwanManger : MonoBehaviour
     public GameObject powerupPrefab;
     private float spawnRange = 9.0f;
     private int enemyCount;
-    public int waveNumber = 1;
+    private int waveNumber = 1;
+    private PlayerController playerControllerScript;
+
+    public int WaveNumber
+    {
+        get { return waveNumber; }
+        set { waveNumber = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
         SpwanEnemyWave(waveNumber);
         Instantiate(powerupPrefab, GenerateSpwanPosition(), powerupPrefab.transform.rotation);
     }
@@ -20,12 +29,15 @@ public class SpwanManger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemyCount = FindObjectsOfType<Enemy>().Length;
-        if(enemyCount == 0)
-        { 
-            waveNumber++;
-            SpwanEnemyWave(waveNumber);
-            Instantiate(powerupPrefab, GenerateSpwanPosition(), powerupPrefab.transform.rotation);
+        if (playerControllerScript.isGameActive)
+        {
+            enemyCount = FindObjectsOfType<Enemy>().Length;
+            if (enemyCount == 0)
+            {
+                waveNumber++;
+                SpwanEnemyWave(waveNumber);
+                Instantiate(powerupPrefab, GenerateSpwanPosition(), powerupPrefab.transform.rotation);
+            }
         }
     }
 
